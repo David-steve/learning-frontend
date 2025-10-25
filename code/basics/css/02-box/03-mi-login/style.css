@@ -1,0 +1,53 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-box {
+    width: 360px;
+    height: 340px;
+
+    margin: 100px auto;
+    // background: red;
+}
+
+.login-box h1 {
+    background: #ff4c00 url(assets/mi-logo.png) no-repeat 0 center;
+    height: 50px;
+    width: 45px;
+    margin: 0 auto;
+}
+
+.login-box h2 {
+    margin: 32px 0 44px;
+    font-size: 28px;
+    text-align: center;
+
+    /* 字重的基准值 表示不进行任何加粗或减细处理 */
+    font-weight: 400;
+}
+
+.login-box input {
+    width: 355px;
+    height: 47px;
+    border: 1px solid #ccc;
+
+    margin-bottom: 12px;
+    padding-left: 12px;
+}
+
+.login-box button {
+    width: 355px;
+    height: 47px;
+    line-height: 47px;
+    background: #ff4c00;
+    color: white;
+    text-align: center;
+    border: none;
+    font-size: 15px;
+}
+
+.login-box button:hover {
+    background: red;
+}
