@@ -1,0 +1,389 @@
+body {
+  background-color: #f3f5f7;
+}
+
+.header {
+    height: 100px;
+    background-color: #fff;
+}
+
+.wrapper {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.header .wrapper {
+    display: flex;
+    padding-top: 30px;
+}
+
+.header .logo{
+    background: url(../image/logo.png) no-repeat 0 center;
+    width: 200px;
+    height: 41px;
+}
+
+.header .logo a {
+    font-size: 0;
+}
+
+.header .nav {
+    margin-left: 102px;
+}
+
+.header .nav ul{
+    display: flex;
+    padding-left: 20px;
+}
+
+.header .wrapper .nav li {
+    height: 41px;
+    line-height: 41px;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.header .wrapper .nav li:hover {
+    border-bottom: 4px solid #00a4ff;
+}
+
+
+.header .wrapper .nav li a {
+    display: block;
+    font-size: 19px;
+    /*padding: 8px;*/
+}
+
+.search {
+    background-color: #f3f5f7;
+    border-radius: 20px;
+    margin-left: 50px;
+}
+
+.search .search-box {
+    width: 412px;
+    height: 40px;
+    border: 0;
+    /* 背景色透明 */
+    background-color: transparent;
+    outline: 0;
+    padding-left: 10px;
+    background-position: right center;
+}
+
+.search .search-box-submit {
+    width: 20px;
+    margin-right: 10px;
+    background-image: url(../image/search.png);
+    background-repeat: no-repeat;
+    outline: 0;
+    border: 0;
+}
+
+.user {
+    margin-left: 50px;
+}
+
+.user img {
+    vertical-align: middle;
+}
+
+.user span {
+    color: #666666;
+}
+
+.banner {
+    background-color: #0092cb;
+}
+
+.banner .wrapper {
+    background-image: url(../upload/banner.png);
+    background-repeat: no-repeat;
+    height: 420px;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.banner .left {
+    width: 191px;
+    height: 420px;
+    background-color: rgba(0,0,0,0.42);
+    padding: 3px 20px;
+}
+
+
+.banner .left a{
+    display: block;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 46px;
+    height: 46px;
+    background-image: url(../image/right.png);
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
+.banner .left a:hover {
+    color: #00a4ff;
+    background-image: url(../image/right-hover.png);
+}
+
+.banner .wrapper .right {
+    width: 350px;
+    line-weight: 400;
+    color: white;
+    background-color: #209dd5;
+    margin-top: 40px;
+    margin-right: 35px;
+    border-radius: 15px;
+    height: 305px;
+}
+
+.banner .right .title{
+    font-size: 25px;
+    font-weight: 400;
+    margin: 10px 10px;
+}
+
+.banner .right .class-list{
+    border-radius: 10px;
+    background-color: white;
+    height: 310px;
+}
+
+.banner .right .class-list dl {
+    margin-left: 15px;
+    margin-right: 30px;
+    color: #333333;
+}
+
+.banner .right dt {
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+.banner .wrapper .right dd {
+    border-bottom: 1px solid #ccc;
+    font-align: center;
+    line-height: 40px;
+}
+
+
+.banner .class-list dd{
+    font-size: 18px;
+}
+
+.banner .class-list span {
+    color: #00a4ff;
+}
+
+.banner .right strong {
+    font-weight: 400;
+}
+
+.banner .right .all-classes {
+    display: block;
+    background-color: #00a4ff;
+    width: 310px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 35px;
+    margin: 10px 15px;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+.recommend .wrapper {
+    height: 60px;
+    margin-top: 10px;
+}
+
+.recommend ul {
+    /* 除去标题和修改兴趣的尺寸，父级剩余尺寸都给ul，实现把修改兴趣挤到最右侧 */
+    flex: 1;
+}
+
+.recommend .wrapper > a {
+    display: block;
+    color: #00a4ff;
+    text-align: center;
+    line-height: 60px;
+    height: 60px;
+    padding: 0 20px;
+}
+
+.recommend li a{
+    color: #000;
+    padding: 0 24px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    border-right: 1px solid #e0e0e0;
+}
+
+.recommend li:last-child a{
+    border-right: 0px;
+}
+
+.courses {
+    margin-top 10px;
+}
+
+.courses .hd {
+  justify-content: space-between;
+    line-height: 60px;
+    height: 60px;
+}
+
+.courses .hd h3 {
+    font-weight: 400;
+}
+
+.courses .hd a {
+    display: block;
+    background: url(../image/more.png) no-repeat right center;
+    width: 76px;
+    color: #999;
+    padding-right: 10px;
+}
+
+.courses ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.courses li {
+  margin-bottom: 14px;
+  width: 228px;
+  height: 271px;
+  background-color: #ffffff;
+}
+
+.courses li p{
+    margin: 10px 0;
+    text-align: left;
+    padding: 0 12px;
+}
+
+
+.courses li span {
+    font-size: 14px;
+    color: orange;
+}
+
+.courses li > p{
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 13px;
+}
+
+.frontend .hd {
+    justify-content: space-between;
+}
+
+.frontend h2 {
+    font-weight: 400;
+    height: 60px;
+    line-height: 60px;
+}
+
+.frontend .hd span {
+    height: 60px;
+    line-height: 60px;
+    font-size: 18px;
+    margin-right: 50px;
+}
+
+.frontend .hd .active {
+    color: #00a4ff;
+}
+
+.frontend .hd a {
+    height: 60px;
+    line-height: 60px;
+    background: url(../image/more.png) no-repeat right center;
+    padding-right: 20px;
+}
+
+.frontend .hd a:hover {
+    color: #00a4ff;
+    background-image: url(../image/right-hover.png);
+}
+
+.frontend .bd {
+    justify-content: space-between;
+}
+
+.frontend ul {
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.frontend .bd li {
+    width: 228px;
+    height: 271px;
+    background-color: #ffffff;
+}
+
+.frontend .text {
+    padding: 20px 20px;
+    font-size: 14px;
+}
+
+.frontend h4 {
+    font-weight: 400;
+    height: 40px;
+    line-height: 20px;
+    margin-bottom: 13px;
+}
+
+.frontend .text p {
+    color: #999;
+}
+
+.frontend span {
+    color: orange;
+}
+
+.footer .wrapper{
+    margin-top: 60px;
+    padding-top: 60px;
+    justify-content: space-between;
+    height: 273px;
+    background-color: #fff;
+}
+
+.footer .wrapper > .left{
+    width: 440px;
+}
+
+.footer .left p{
+    margin-top: 20px;
+    font-size: 12px;
+    color:#666;
+}
+
+.footer .wrapper > .right {
+    margin-left: 230px;
+    padding-right: 30px;
+    flex: 1;
+    justify-content: space-between;
+
+}
+
+.footer .wrapper h4 {
+    font-weight: 400;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+
+.footer .wrapper ul li {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+

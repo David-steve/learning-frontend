@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON在线解析 - JSON.CN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --sidebar-bg: #ffffff;
+            --editor-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --header-bg: #ffffff;
+            --hover-color: #f0f0f0;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --sidebar-bg: #2d2d2d;
+            --editor-bg: #252525;
+            --border-color: #444;
+            --header-bg: #2d2d2d;
+            --hover-color: #3a3a3a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: var(--header-bg);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* 主体内容 */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-title {
+            padding: 0 20px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-links li {
+            padding: 8px 20px;
+        }
+
+        .sidebar-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            display: block;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .sidebar-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* 编辑器区域 */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: var(--bg-color);
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .editor-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .json-editor, .json-viewer {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: var(--editor-bg);
+        }
+
+        .CodeMirror {
+            height: 100%;
+            font-size: 14px;
+        }
+
+        .json-tree {
+            padding: 15px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .json-node {
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .json-key {
+            color: #d73a49;
+            font-weight: bold;
+        }
+
+        .json-string {
+            color: #032f62;
+        }
+
+        .json-number {
+            color: #005cc5;
+        }
+
+        .json-boolean {
+            color: #6f42c1;
+        }
+
+        .json-null {
+            color: #6a737d;
+        }
+
+        .json-collapse {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .json-error {
+            color: var(--error-color);
+            padding: 10px;
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* 底部信息 */
+        footer {
+            background-color: var(--header-bg);
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer-links {
+            margin-top: 10px;
+        }
+
+        .footer-links a {
+            margin: 0 10px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+
+            .editor-wrapper {
+                flex-direction: column;
+            }
+
+            .json-editor, .json-viewer {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">JSON.CN</div>
+            <nav class="nav-links">
+                <a href="#">工具</a>
+                <a href="#">教程</a>
+                <a href="#">测评</a>
+                <a href="#">博客</a>
+                <a href="#">字典</a>
+                <a href="#">AI导航</a>
+            </nav>
+            <div class="header-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn btn-secondary">登录</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">JSON工具</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#">JSON在线解析</a></li>
+                        <li><a href="#">JSON压缩转义</a></li>
+                        <li><a href="#">JSON编辑器</a></li>
+                        <li><a href="#">JSON排序</a></li>
+                        <li><a href="#">JSONPath</a></li>
+                        <li><a href="#">JSON转Java实体</a></li>
+                        <li><a href="#">JSON转C#实体</a></li>
+                        <li><a href="#">JSON转CSV、Excel</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">格式化</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#">JS压缩、格式化</a></li>
+                        <li><a href="#">CSS压缩、格式化</a></li>
+                        <li><a href="#">XML格式化</a></li>
+                        <li><a href="#">SQL格式化</a></li>
+                        <li><a href="#">Python格式化</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">常用工具</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#">代码对比</a></li>
+                        <li><a href="#">Unix时间互转</a></li>
+                        <li><a href="#">URL编解码</a></li>
+                        <li><a href="#">Base64加解密</a></li>
+                        <li><a href="#">MD5加密</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <main class="editor-container">
+                <div class="editor-header">
+                    <h2 class="editor-title">JSON在线解析</h2>
+                    <div class="editor-controls">
+                        <button class="btn btn-secondary" id="formatBtn">
+                            <i class="fas fa-indent"></i> 格式化
+                        </button>
+                        <button class="btn btn-secondary" id="compressBtn">
+                            <i class="fas fa-compress"></i> 压缩
+                        </button>
+                        <button class="btn btn-primary" id="clearBtn">
+                            <i class="fas fa-trash"></i> 清空
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-wrapper">
+                    <div class="json-editor">
+                        <textarea id="jsonInput">{
+  "name": "JSON在线解析",
+  "description": "一个功能强大的JSON解析工具",
+  "version": "1.0.0",
+  "author": {
+    "name": "开发者",
+    "email": "dev@example.com"
+  },
+  "features": [
+    "格式化",
+    "语法高亮",
+    "错误检查",
+    "树形视图"
+  ],
+  "supportedTypes": ["string", "number", "boolean", "null", "object", "array"]
+}</textarea>
+                    </div>
+
+                    <div class="json-viewer">
+                        <div class="json-tree" id="jsonTree"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer>
+            <div>© 2014-2024 JSON.CN ALL RIGHT RESERVED | 闽ICP备16038489号-5</div>
+            <div class="footer-links">
+                <a href="#">隐私保护</a>
+                <a href="#">权利保护</a>
+                <a href="#">联系我们</a>
+                <a href="#">问题反馈</a>
+                <a href="#">更新日志</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script>
+        // 初始化CodeMirror编辑器
+        const editor = CodeMirror.fromTextArea(document.getElementById('jsonInput'), {
+            mode: 'application/json',
+            theme: 'default',
+            lineNumbers: true,
+            lineWrapping: true,
+            indentUnit: 2,
+            tabSize: 2,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            scrollbarStyle: 'simple'
+        });
+
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                editor.setOption('theme', 'material-darker');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                editor.setOption('theme', 'default');
+            }
+            updateJsonTree();
+        });
+
+        // 格式化JSON
+        document.getElementById('formatBtn').addEventListener('click', () => {
+            try {
+                const jsonText = editor.getValue();
+                const parsedJson = JSON.parse(jsonText);
+                const formattedJson = JSON.stringify(parsedJson, null, 2);
+                editor.setValue(formattedJson);
+                updateJsonTree();
+            } catch (error) {
+                showError('JSON格式错误: ' + error.message);
+            }
+        });
+
+        // 压缩JSON
+        document.getElementById('compressBtn').addEventListener('click', () => {
+            try {
+                const jsonText = editor.getValue();
+                const parsedJson = JSON.parse(jsonText);
+                const compressedJson = JSON.stringify(parsedJson);
+                editor.setValue(compressedJson);
+                updateJsonTree();
+            } catch (error) {
+                showError('JSON格式错误: ' + error.message);
+            }
+        });
+
+        // 清空编辑器
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            editor.setValue('');
+            document.getElementById('jsonTree').innerHTML = '';
+        });
+
+        // 更新JSON树形视图
+        function updateJsonTree() {
+            const jsonTree = document.getElementById('jsonTree');
+
+            try {
+                const jsonText = editor.getValue();
+                if (!jsonText.trim()) {
+                    jsonTree.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">请输入JSON数据</div>';
+                    return;
+                }
+
+                const parsedJson = JSON.parse(jsonText);
+                jsonTree.innerHTML = '';
+                renderJsonTree(parsedJson, jsonTree, 0);
+            } catch (error) {
+                showError('JSON解析错误: ' + error.message);
+            }
+        }
+
+        // 渲染JSON树形结构
+        function renderJsonTree(data, container, depth) {
+            if (typeof data === 'object' && data !== null) {
+                const isArray = Array.isArray(data);
+                const items = Object.entries(data);
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'json-node';
+
+                const expander = document.createElement('span');
+                expander.className = 'json-collapse';
+                expander.innerHTML = '<i class="fas fa-caret-right"></i>';
+                expander.style.marginLeft = (depth * 15) + 'px';
+
+                const typeIndicator = document.createElement('span');
+                typeIndicator.className = 'json-key';
+                typeIndicator.textContent = isArray ? `Array[${items.length}]` : `Object{${items.length}}`;
+
+                wrapper.appendChild(expander);
+                wrapper.appendChild(typeIndicator);
+
+                const childrenContainer = document.createElement('div');
+                childrenContainer.style.display = 'none';
+                childrenContainer.style.marginLeft = '15px';
+
+                items.forEach(([key, value]) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'json-node';
+
+                    const keySpan = document.createElement('span');
+                    keySpan.className = 'json-key';
+                    keySpan.textContent = (isArray ? `[${key}]` : `${key}:`) + ' ';
+
+                    const valueSpan = document.createElement('span');
+
+                    if (typeof value === 'string') {
+                        valueSpan.className = 'json-string';
+                        valueSpan.textContent = `"${value}"`;
+                    } else if (typeof value === 'number') {
+                        valueSpan.className = 'json-number';
+                        valueSpan.textContent = value;
+                    } else if (typeof value === 'boolean') {
+                        valueSpan.className = 'json-boolean';
+                        valueSpan.textContent = value;
+                    } else if (value === null) {
+                        valueSpan.className = 'json-null';
+                        valueSpan.textContent = 'null';
+                    } else if (typeof value === 'object') {
+                        valueSpan.className = 'json-key';
+                        valueSpan.textContent = Array.isArray(value) ?
+                            `Array[${Object.keys(value).length}]` :
+                            `Object{${Object.keys(value).length}}`;
+
+                        // 递归渲染子对象
+                        const childContainer = document.createElement('div');
+                        childContainer.style.marginLeft = '15px';
+                        renderJsonTree(value, childContainer, depth + 1);
+                        itemDiv.appendChild(keySpan);
+                        itemDiv.appendChild(valueSpan);
+                        itemDiv.appendChild(childContainer);
+                        childrenContainer.appendChild(itemDiv);
+                        return;
+                    }
+
+                    itemDiv.appendChild(keySpan);
+                    itemDiv.appendChild(valueSpan);
+                    childrenContainer.appendChild(itemDiv);
+                });
+
+                wrapper.appendChild(childrenContainer);
+                container.appendChild(wrapper);
+
+                // 展开/折叠功能
+                expander.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (childrenContainer.style.display === 'none') {
+                        childrenContainer.style.display = 'block';
+                        icon.className = 'fas fa-caret-down';
+                    } else {
+                        childrenContainer.style.display = 'none';
+                        icon.className = 'fas fa-caret-right';
+                    }
+                });
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const jsonTree = document.getElementById('jsonTree');
+            jsonTree.innerHTML = `<div class="json-error">${message}</div>`;
+        }
+
+        // 初始化时渲染JSON树
+        editor.on('change', () => {
+            updateJsonTree();
+        });
+
+        // 初始渲染
+        setTimeout(() => {
+            updateJsonTree();
+        }, 100);
+    </script>
+</body>
+</html>
